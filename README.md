@@ -2,6 +2,19 @@
 
 Transform document archives into interactive, visual knowledge graphs with natural language Q&A capabilities.
 
+🚀 **[Try the Live Demo](https://radiangle-universal-knowledge-graph-builder-app-39i9bq.streamlit.app/)**
+
+## Demo Instructions
+
+1. **Visit the live demo** using the link above
+2. **Set up your API keys** in the sidebar (OpenAI API key required)
+3. **Connect to Neo4j** (or use the demo with pre-configured database)
+4. **Load sample data** using the "📚 Load Sample Data" button for instant exploration
+5. **Explore the graph** in the visualization tab
+6. **Ask questions** about AI, tech companies, universities, and more!
+
+The sample dataset includes comprehensive information about artificial intelligence, machine learning, major technology companies, academic institutions, and research collaborations.
+
 ## Features
 
 - 📄 **Document Ingestion**: Upload text files or scrape web content
