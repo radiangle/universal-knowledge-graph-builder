@@ -5,10 +5,17 @@ from neo4j import GraphDatabase
 import json
 import streamlit as st
 from datetime import datetime
-from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv(override=True)
+try:
+    from dotenv import load_dotenv
+    load_dotenv(override=True)
+except ImportError:
+    # Continue without dotenv for cloud deployment
+    pass
+except Exception:
+    # Continue without .env file for cloud deployment
+    pass
 
 
 class Neo4jGraphBuilder:

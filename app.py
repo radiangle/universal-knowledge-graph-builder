@@ -1,6 +1,5 @@
 import streamlit as st
 import os
-from dotenv import load_dotenv
 from src.ingestion import DocumentProcessor
 from src.graph_builder import Neo4jGraphBuilder
 from src.visualization import GraphVisualizer
@@ -8,9 +7,14 @@ from src.qa_engine import QAEngine
 
 # Load environment variables from .env file in current directory
 try:
+    from dotenv import load_dotenv
     load_dotenv(override=True)
+except ImportError:
+    # Continue without dotenv for cloud deployment
+    pass
 except Exception:
-    pass  # Continue without .env file for cloud deployment
+    # Continue without .env file for cloud deployment
+    pass
 
 # Page configuration
 st.set_page_config(

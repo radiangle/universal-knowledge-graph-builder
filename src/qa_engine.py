@@ -3,10 +3,17 @@ import os
 from typing import List, Dict, Any, Tuple
 from neo4j import GraphDatabase
 import streamlit as st
-from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv(override=True)
+try:
+    from dotenv import load_dotenv
+    load_dotenv(override=True)
+except ImportError:
+    # Continue without dotenv for cloud deployment
+    pass
+except Exception:
+    # Continue without .env file for cloud deployment
+    pass
 
 
 class QAEngine:
