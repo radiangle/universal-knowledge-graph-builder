@@ -37,6 +37,9 @@ data/
 *.json
 *.txt
 
+# Exception: Include sample data
+!sample_data.txt
+
 # Logs
 *.log
 
