@@ -7,7 +7,10 @@ from src.visualization import GraphVisualizer
 from src.qa_engine import QAEngine
 
 # Load environment variables from .env file in current directory
-load_dotenv(override=True)
+try:
+    load_dotenv(override=True)
+except Exception:
+    pass  # Continue without .env file for cloud deployment
 
 # Page configuration
 st.set_page_config(
@@ -35,8 +38,11 @@ def connect_to_neo4j():
         neo4j_password = os.getenv('NEO4J_PASSWORD', '')
         
         if not neo4j_password:
-            st.error("Please set NEO4J_PASSWORD in your environment variables")
-            st.stop()
+            st.error("❌ Neo4j password not found")
+            st.info("Please set NEO4J_PASSWORD in environment variables or Streamlit secrets")
+            if neo4j_uri.startswith('bolt://localhost'):
+                st.info("💡 For cloud deployment, consider using Neo4j AuraDB (free tier available)")
+            return None, None
         
         graph_builder = Neo4jGraphBuilder(neo4j_uri, neo4j_username, neo4j_password)
         qa_engine = QAEngine(graph_builder.driver)
@@ -45,8 +51,15 @@ def connect_to_neo4j():
     
     except Exception as e:
         st.error(f"Failed to connect to Neo4j: {str(e)}")
-        st.info("Make sure Neo4j is running and credentials are correct")
-        st.stop()
+        st.info("Check your Neo4j connection details and ensure the database is running")
+        with st.expander("Common connection issues"):
+            st.markdown("""
+            - **Local Neo4j**: Make sure Neo4j Desktop/Server is running on port 7687
+            - **Neo4j AuraDB**: Use the connection URI from your AuraDB console (starts with `neo4j+s://`)
+            - **Firewall**: Ensure port 7687 (or AuraDB port) is accessible
+            - **Credentials**: Double-check username and password
+            """)
+        return None, None
 
 def main():
     init_session_state()
@@ -62,7 +75,19 @@ def main():
         # API Key check
         openai_key = os.getenv('OPENAI_API_KEY')
         if not openai_key:
-            st.error("Please set OPENAI_API_KEY environment variable")
+            st.error("❌ OpenAI API Key not found")
+            st.info("For Streamlit Cloud deployment, add OPENAI_API_KEY to your app secrets")
+            with st.expander("How to add secrets in Streamlit Cloud"):
+                st.code('''
+1. Go to your app settings in Streamlit Cloud
+2. Navigate to "Secrets" section
+3. Add the following:
+
+OPENAI_API_KEY = "your_openai_api_key_here"
+NEO4J_URI = "your_neo4j_uri_here"  
+NEO4J_USERNAME = "neo4j"
+NEO4J_PASSWORD = "your_neo4j_password_here"
+                ''')
             st.stop()
         else:
             # Show partial key for verification
@@ -72,8 +97,11 @@ def main():
         # Neo4j connection
         if st.button("🔌 Connect to Neo4j"):
             with st.spinner("Connecting to Neo4j..."):
-                st.session_state.graph_builder, st.session_state.qa_engine = connect_to_neo4j()
-                st.success("✅ Connected to Neo4j")
+                graph_builder, qa_engine = connect_to_neo4j()
+                if graph_builder and qa_engine:
+                    st.session_state.graph_builder = graph_builder
+                    st.session_state.qa_engine = qa_engine
+                    st.success("✅ Connected to Neo4j")
         
         # Clear database button
         if st.session_state.graph_builder:

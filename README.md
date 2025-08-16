@@ -110,19 +110,39 @@ src/
 
 ### Streamlit Community Cloud
 
-1. Push to GitHub
-2. Connect to Streamlit Cloud
-3. Set environment variables in Streamlit dashboard
-4. Deploy!
+1. **Fork/Clone this repository**
+2. **Set up Neo4j AuraDB** (recommended for cloud deployment):
+   - Sign up for [Neo4j AuraDB](https://neo4j.com/cloud/aura/) (free tier available)
+   - Create a new instance and note the connection details
+3. **Deploy to Streamlit Cloud**:
+   - Connect your GitHub repository to [Streamlit Cloud](https://streamlit.io/cloud)
+   - In your app settings, go to "Secrets" and add:
+   ```toml
+   OPENAI_API_KEY = "your_openai_api_key_here"
+   NEO4J_URI = "neo4j+s://your-instance.databases.neo4j.io"
+   NEO4J_USERNAME = "neo4j"
+   NEO4J_PASSWORD = "your_neo4j_password_here"
+   ```
+4. **Deploy!**
 
-### Manual Deployment
+### Local Development with Docker
+
+```bash
+# Using Docker Compose (includes Neo4j)
+docker-compose up -d
+
+# Or manual Docker setup
+docker run --name neo4j -p7474:7474 -p7687:7687 -e NEO4J_AUTH=neo4j/password neo4j:latest
+```
+
+### Other Deployment Options
 
 The app can be deployed on any platform supporting Python:
-- Heroku
-- Railway
-- Render
-- Google Cloud Run
-- AWS ECS
+- **Heroku**: Add environment variables to config vars
+- **Railway**: Set environment variables in project settings  
+- **Render**: Add environment variables in web service settings
+- **Google Cloud Run**: Use Secret Manager for sensitive data
+- **AWS ECS**: Store secrets in AWS Systems Manager
 
 ## Performance Tips
 
